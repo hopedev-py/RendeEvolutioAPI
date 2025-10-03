@@ -1,34 +1,38 @@
-# render.yaml
+# render.yaml (VERSÃO CORRIGIDA)
 # Receita para implantar a Evolution API no Render.com
 
+# Primeiro, definimos os "recursos" que vamos usar, como discos.
+disks:
+  - name: evolution-data      # Nome do nosso "HD externo virtual"
+    sizeGB: 1               # 1 GB é mais que suficiente
+    
+# Agora, definimos os serviços que usarão esses recursos.
 services:
   # Define o serviço principal, que será a nossa API
   - type: web
-    name: evolution-api # Nome do seu serviço no painel do Render
-    env: docker # Informa ao Render que estamos usando uma imagem Docker
-
-    # --- Configuração da Imagem Docker ---
+    name: evolution-api       # Nome do seu serviço no painel do Render
+    env: docker             # Informa ao Render que estamos usando uma imagem Docker
+    
+    # --- Configuração da Imagem Docker (SINTAXE CORRIGIDA) ---
     # Aponta para a imagem oficial da Evolution API no Docker Hub
-    dockerImage: atende/evolution-api
+    image:
+      url: atende/evolution-api:latest
 
-    # --- Configuração do Disco Persistente (A Parte Mais Importante) ---
-    # Cria um "HD externo virtual" para não perder a sessão do WhatsApp
-    disks:
-      - name: evolution-data # Nome do disco
-        mountPath: /evolution/instances # Onde o disco será "conectado" dentro do contêiner
-        sizeGB: 1 # 1 GB é mais que suficiente para os arquivos de sessão
-
-    # --- Configuração de Rede e Saúde ---
+    # --- Configuração do Disco Persistente (SINTAXE CORRIGIDA) ---
+    # Conecta o disco que definimos acima a este serviço
+    disk:
+      name: evolution-data    # Usa o disco com este nome
+      mountPath: /evolution/instances # Onde o disco será "conectado" dentro do contêiner
+      
+    # --- Configuração de Rede e Saúde (SINTAXE CORRIGIDA) ---
     # Define a porta interna que a Evolution API usa
     envVars:
       - key: PORT
         value: 8080
 
     # Verifica se a API está saudável antes de considerá-la "online"
-    healthCheck:
-      path: /
-      initialDelaySeconds: 120 # Espera 2 minutos para a API iniciar completamente
-
+    healthCheckPath: /
+    
     # --- Plano de Assinatura ---
-    # Começa com o plano gratuito (Free). Você pode mudar isso no painel do Render.
+    # Começa com o plano gratuito (Free).
     plan: free
