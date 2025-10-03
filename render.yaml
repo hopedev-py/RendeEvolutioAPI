@@ -1,38 +1,18 @@
-# render.yaml (VERSÃO CORRIGIDA)
-# Receita para implantar a Evolution API no Render.com
-
-# Primeiro, definimos os "recursos" que vamos usar, como discos.
-disks:
-  - name: evolution-data      # Nome do nosso "HD externo virtual"
-    sizeGB: 1               # 1 GB é mais que suficiente
-    
-# Agora, definimos os serviços que usarão esses recursos.
 services:
-  # Define o serviço principal, que será a nossa API
-  - type: web
-    name: evolution-api       # Nome do seu serviço no painel do Render
-    env: docker             # Informa ao Render que estamos usando uma imagem Docker
-    
-    # --- Configuração da Imagem Docker (SINTAXE CORRIGIDA) ---
-    # Aponta para a imagem oficial da Evolution API no Docker Hub
-    image:
-      url: atende/evolution-api:latest
+- type: web
+name: evolution-api
+env: docker
+repo: https://github.com/EvolutionAPI/evolution-api
+branch: main
+autoDeploy: false
+envVars:
+  - key: PORT
+    value: 8080
+  - key: DATABASE_ENABLED
+    value: false
+disks:
+  - name: evolution-data
+    mountPath: /evolution/dist/instances
+    sizeGB: 1
+plan: free
 
-    # --- Configuração do Disco Persistente (SINTAXE CORRIGIDA) ---
-    # Conecta o disco que definimos acima a este serviço
-    disk:
-      name: evolution-data    # Usa o disco com este nome
-      mountPath: /evolution/instances # Onde o disco será "conectado" dentro do contêiner
-      
-    # --- Configuração de Rede e Saúde (SINTAXE CORRIGIDA) ---
-    # Define a porta interna que a Evolution API usa
-    envVars:
-      - key: PORT
-        value: 8080
-
-    # Verifica se a API está saudável antes de considerá-la "online"
-    healthCheckPath: /
-    
-    # --- Plano de Assinatura ---
-    # Começa com o plano gratuito (Free).
-    plan: free
