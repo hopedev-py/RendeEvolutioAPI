@@ -1,20 +1,12 @@
-# render.yaml (versão corrigida)
-
 services:
   - type: web
-    name: evolution-api       # Nome do serviço no painel do Render
-    plan: free                # Plano inicial
-
-    docker:
-      image: atende/evolution-api:latest  # Imagem oficial no Docker Hub
+    name: evolution-api
+    plan: free
+    env: docker
+    image: atende/evolution-api:latest
 
     envVars:
       - key: PORT
         value: 8080
-
-    disks:
-      - name: evolution-data
-        mountPath: /evolution/instances
-        sizeGB: 1
 
     healthCheckPath: /
