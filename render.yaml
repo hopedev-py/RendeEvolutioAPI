@@ -1,0 +1,34 @@
+# render.yaml
+# Receita para implantar a Evolution API no Render.com
+
+services:
+  # Define o serviço principal, que será a nossa API
+  - type: web
+    name: evolution-api # Nome do seu serviço no painel do Render
+    env: docker # Informa ao Render que estamos usando uma imagem Docker
+
+    # --- Configuração da Imagem Docker ---
+    # Aponta para a imagem oficial da Evolution API no Docker Hub
+    dockerImage: atende/evolution-api
+
+    # --- Configuração do Disco Persistente (A Parte Mais Importante) ---
+    # Cria um "HD externo virtual" para não perder a sessão do WhatsApp
+    disks:
+      - name: evolution-data # Nome do disco
+        mountPath: /evolution/instances # Onde o disco será "conectado" dentro do contêiner
+        sizeGB: 1 # 1 GB é mais que suficiente para os arquivos de sessão
+
+    # --- Configuração de Rede e Saúde ---
+    # Define a porta interna que a Evolution API usa
+    envVars:
+      - key: PORT
+        value: 8080
+
+    # Verifica se a API está saudável antes de considerá-la "online"
+    healthCheck:
+      path: /
+      initialDelaySeconds: 120 # Espera 2 minutos para a API iniciar completamente
+
+    # --- Plano de Assinatura ---
+    # Começa com o plano gratuito (Free). Você pode mudar isso no painel do Render.
+    plan: free
